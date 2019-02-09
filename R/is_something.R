@@ -4,10 +4,11 @@
 # @return logical - TRUE if a valid magrittr pipe, FALSE otherwise.
 is_pipe <- function(pipe)
 {
-  identical(pipe, quote(`%>%`))   ||
-  identical(pipe, quote(`%T>%`))  ||
-  identical(pipe, quote(`%<>%`))  ||
-  identical(pipe, quote(`%$%`))
+  inherits(eval(pipe),"pipe")
+  # identical(pipe, quote(`%>%`))   ||
+  # identical(pipe, quote(`%T>%`))  ||
+  # identical(pipe, quote(`%<>%`))  ||
+  # identical(pipe, quote(`%$%`))
 }
 
 # Determine whether an non-evaluated call is parenthesized.

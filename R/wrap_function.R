@@ -17,10 +17,11 @@
 wrap_function <- function(body, pipe, env)
 {
  
-  if (is_tee(pipe)) {
-    body <- call("{", body, quote(.))
-  } else if (is_dollar(pipe)) {
-    body <- substitute(with(., b), list(b = body))
-  } 
+  # if (is_tee(pipe)) {
+  #   body <- call("{", body, quote(.))
+  # } else if (is_dollar(pipe)) {
+  #   body <- substitute(with(., b), list(b = body))
+  # }
+  body <- eval(attr(eval(pipe),"body"))
   eval(call("function", as.pairlist(alist(.=)), body), env, env)
 }

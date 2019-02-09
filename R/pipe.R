@@ -1,9 +1,9 @@
 # Create a pipe operator.
 #
 # This function is used to create all the magrittr pipe operators.
-pipe <- function()
+pipe <- function(body = body)
 {
-  function(lhs, rhs)
+  fun <- function(lhs, rhs)
   {
     # the parent environment
     parent <- parent.frame()
@@ -55,6 +55,9 @@ pipe <- function()
       }
     }
   }
+  class(fun) <- c("pipe","function")
+  attr(fun,"body") <- substitute(body)
+  fun
 }
 
 #' Pipe
@@ -253,7 +256,7 @@ pipe <- function()
 #' 
 #' @rdname tee
 #' @export
-`%T>%` <- pipe() 
+`%T>%` <- pipe(call("{", body, quote(.)))
 
 #' Exposition pipe
 #' 
@@ -280,4 +283,4 @@ pipe <- function()
 #'   
 #' @rdname exposition
 #' @export
-`%$%` <- pipe() 
+`%$%` <- pipe(substitute(with(., BODY), list(BODY = body))) 
