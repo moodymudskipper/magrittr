@@ -78,7 +78,7 @@ NULL
 
 #' @rdname pipeops
 #' @export
-`%>%`  <- new_pipe({BODY})
+`%>%`  <- new_pipe()
 
 #' @rdname pipeops
 #' @export

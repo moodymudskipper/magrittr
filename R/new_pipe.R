@@ -70,15 +70,3 @@ print.pipe <- function(x,...){
   }
   invisible(x)
 }
-# 
-# library(pipes)
-# `%p>%` <- pipes::`%>%`
-# `%>%`  <- magrittr::`%>%`
-# microbenchmark::microbenchmark(
-#   magrittr = 1 %>% force %>% force %>% force,
-#   pipes = 1 %p>% force %p>% force %p>% force, times = 1000)
-# # Unit: microseconds
-# #                               expr  min    lq     mean median    uq   max neval cld
-# #    1 %>% force %>% force %>% force 75.1  77.8  88.7577   80.6  83.3 570.2  1000  a 
-# # 1 %p>% force %p>% force %p>% force 97.3 100.6 113.9058  104.2 108.3 681.4  1000   b
-# 
