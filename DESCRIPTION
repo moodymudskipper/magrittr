@@ -1,7 +1,7 @@
 Type: Package
 Package: pipes
 Title: More pipes and a pipe generator
-Version: 1.5.0.9000
+Version: 0.0.0.9000
 Authors@R: 
     c(person(given = "Antoine Fabri",
              family = "Fabri",
@@ -10,7 +10,7 @@ Authors@R:
 Description: Expands magrittr by providing more pipe operators and a convenient
     way to create custom pipes.
 License: MIT + file LICENSE
-BugReports: https://github.com/tidyverse/magrittr/issues
+BugReports: https://github.com/moodymudskipper/pipes/issues
 Suggests: knitr,
     rmarkdown,
     purrr,
