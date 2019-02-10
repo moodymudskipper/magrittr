@@ -13,7 +13,7 @@ License: MIT + file LICENSE
 URL: http://magrittr.tidyverse.org,
     https://github.com/tidyverse/magrittr
 BugReports: https://github.com/tidyverse/magrittr/issues
-imports: magrittr 
+Depends: magrittr 
 VignetteBuilder: 
     knitr
 ByteCompile: Yes
