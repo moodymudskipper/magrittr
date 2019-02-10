@@ -24,7 +24,7 @@
 #'   res})
 #' iris %nrowba>% head
 #' @export
-new_pipe <- function(wrap = {BODY})
+new_pipe <- function(wrap)
 {
   # build a standard magrittr pipe
   fun <- pipe()
@@ -33,7 +33,8 @@ new_pipe <- function(wrap = {BODY})
   class(fun) <- c("pipe","function")
   
   # give it an attribute containing wrapper code to be used in wrap_function
-  attr(fun,"wrap") <- substitute(wrap)
+  wrap <- substitute(wrap)
+  attr(fun,"wrap") <- if(missing(wrap)) NULL else  substitute(wrap)
   
   fun
 }
@@ -59,11 +60,25 @@ is_pipe <- function(pipe)
 #' 
 #' @export
 print.pipe <- function(x,...){
-  message("Pipe operator")
-  cat("wrap:\n")
-  print(attr(x,"wrap"))
+  wrap <- attr(x,"wrap")
+  if(is.null(wrap)){
+    message("Standard pipe operator")
+  } else {
+    message("Special pipe operator")
+    cat("wrap:\n")
+    print(wrap)
+  }
   invisible(x)
 }
-
-
-
+# 
+# library(pipes)
+# `%p>%` <- pipes::`%>%`
+# `%>%`  <- magrittr::`%>%`
+# microbenchmark::microbenchmark(
+#   magrittr = 1 %>% force %>% force %>% force,
+#   pipes = 1 %p>% force %p>% force %p>% force, times = 1000)
+# # Unit: microseconds
+# #                               expr  min    lq     mean median    uq   max neval cld
+# #    1 %>% force %>% force %>% force 75.1  77.8  88.7577   80.6  83.3 570.2  1000  a 
+# # 1 %p>% force %p>% force %p>% force 97.3 100.6 113.9058  104.2 108.3 681.4  1000   b
+# 

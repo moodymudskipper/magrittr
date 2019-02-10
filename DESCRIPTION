@@ -17,7 +17,7 @@ Suggests: knitr,
     rlang,
     arsenal,
     testthat
-Depends: magrittr 
+Imports: magrittr 
 VignetteBuilder: knitr
 ByteCompile: Yes
 Encoding: UTF-8

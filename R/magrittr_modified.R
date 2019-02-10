@@ -12,7 +12,8 @@
 wrap_function <- function(body, pipe, env)
 {
   wrap <- attr(eval(pipe),"wrap")
-  body <- eval(substitute(substitute(WRAP,list(BODY = body)), list(WRAP = wrap)))
+  if(!is.null(wrap))
+    body <- eval(substitute(substitute(WRAP,list(BODY = body)), list(WRAP = wrap)))
   eval(call("function", as.pairlist(alist(.=)), body), env, env)
 }
 
