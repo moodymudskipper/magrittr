@@ -7,8 +7,8 @@ Authors@R:
              family = "Fabri",
              role = c("aut", "cre"),
              email = "antoine.fabri@gmail.com"))
-Description: Expands magrittr by providing more pipe operators and a simple way
-    to create custom pipes.
+Description: Expands magrittr by providing more pipe operators and a convenient
+    way to create custom pipes.
 License: MIT + file LICENSE
 URL: http://magrittr.tidyverse.org,
     https://github.com/tidyverse/magrittr
