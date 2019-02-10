@@ -1,6 +1,6 @@
 Type: Package
 Package: pipes
-Title: A Forward-Pipe Operator for R
+Title: More pipes and a pipe generator
 Version: 1.5.0.9000
 Authors@R: 
     c(person(given = "Antoine Fabri",
@@ -10,8 +10,6 @@ Authors@R:
 Description: Expands magrittr by providing more pipe operators and a convenient
     way to create custom pipes.
 License: MIT + file LICENSE
-URL: http://magrittr.tidyverse.org,
-    https://github.com/tidyverse/magrittr
 BugReports: https://github.com/tidyverse/magrittr/issues
 Suggests: knitr,
     rmarkdown,
