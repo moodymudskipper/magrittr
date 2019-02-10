@@ -109,15 +109,13 @@ useful when functions do not have a built-in data argument (see
 \dontrun{
 # debug the chain
 iris \%>\% head(2) \%D>\% `[`(4:5)
-}
 
-\dontrun{
 # View steps of chain in the viewer
 iris \%V>\% head(2) \%V>\% `[`(4:5)
-}
 
 # Log steps in the console
 iris \%L>\% {Sys.sleep(1);head(.,2)} \%L>\% {Sys.sleep(2);.[4:5]}
+}
 
 # Use print or summary on output
 iris \%P>\% head(2) \%P>\% `[`(4:5)

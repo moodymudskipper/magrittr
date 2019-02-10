@@ -10,5 +10,5 @@ undebug_fseq(fseq)
 \item{fseq}{a functional sequence.}
 }
 \description{
-Reexported from \code{\link[magrittr]{undebug_fseq}}
+Reexported from \code{\link[magrittr]{debug_fseq}}
 }

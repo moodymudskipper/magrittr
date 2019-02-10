@@ -10,9 +10,16 @@ devtools::install_github("moodymudskipper/pipes")
 library(pipes)
 ```
 
-The *pipes* package expands the *magrittr* package by providing : \* More pipe operator for debuggind, printing extra info, suppressing warnings or messages and more. \* A convenient way to create custom pipes \* A couple of pipe friendly functions for printing (`pprint`) and testing (`pif`).
+The *pipes* package expands the *magrittr* package by providing :
 
-The package works just as magrittr except that: \* `alias` functions were not imported \* pipes have a class `pipe` and have a dedicated printing method
+-   More pipe operators to debug, print extra info, suppress warnings or messages etc
+-   A convenient way to create custom pipes
+-   A couple of pipe friendly functions for printing (`pprint`) and testing (`pif`).
+
+The package works just as magrittr except that:
+
+-   `alias` functions were not imported
+-   pipes have a class `pipe` and have a dedicated printing method
 
 *magrittr* doesn't need to be attached, but attaching it before *pipes* will make the alias functions available.
 
@@ -32,10 +39,7 @@ New operators
 -   **%quietly&gt;%** : Try, and in case of failure prints error and returns input
 -   **%auto\_browse&gt;%** : Use `purrr::auto_browse()` to debug right before the error happens}
 
-new operators
--------------
-
-We demonstrate a few operators
+Let's showcase a few of them.
 
 Silence a warning:
 
@@ -143,42 +147,8 @@ It's easier to understand how to build a new `pipe` by looking at examples.
 
 ``` r
  `%T>%`
-#> function (lhs, rhs) 
-#> {
-#>     parent <- parent.frame()
-#>     env <- new.env(parent = parent)
-#>     chain_parts <- split_chain(match.call(), env = env)
-#>     pipes <- chain_parts[["pipes"]]
-#>     rhss <- chain_parts[["rhss"]]
-#>     lhs <- chain_parts[["lhs"]]
-#>     env[["_function_list"]] <- lapply(1:length(rhss), function(i) wrap_function(rhss[[i]], 
-#>         pipes[[i]], parent))
-#>     env[["_fseq"]] <- `class<-`(eval(quote(function(value) freduce(value, 
-#>         `_function_list`)), env, env), c("fseq", "function"))
-#>     env[["freduce"]] <- freduce
-#>     if (is_placeholder(lhs)) {
-#>         env[["_fseq"]]
-#>     }
-#>     else {
-#>         env[["_lhs"]] <- eval(lhs, parent, parent)
-#>         result <- withVisible(eval(quote(`_fseq`(`_lhs`)), env, 
-#>             env))
-#>         if (is_compound_pipe(pipes[[1L]])) {
-#>             eval(call("<-", lhs, result[["value"]]), parent, 
-#>                 parent)
-#>         }
-#>         else {
-#>             if (result[["visible"]]) 
-#>                 result[["value"]]
-#>             else invisible(result[["value"]])
-#>         }
-#>     }
-#> }
-#> <bytecode: 0x00000000177fd460>
-#> <environment: 0x00000000170b8d58>
-#> attr(,"class")
-#> [1] "pipe"     "function"
-#> attr(,"wrap")
+#> Pipe operator
+#> wrap:
 #> {
 #>     local(BODY)
 #>     .
@@ -211,80 +181,12 @@ Take a look at the other functions to understand how to make your own :
 
 ``` r
 `%nowarn>%`
-#> function (lhs, rhs) 
-#> {
-#>     parent <- parent.frame()
-#>     env <- new.env(parent = parent)
-#>     chain_parts <- split_chain(match.call(), env = env)
-#>     pipes <- chain_parts[["pipes"]]
-#>     rhss <- chain_parts[["rhss"]]
-#>     lhs <- chain_parts[["lhs"]]
-#>     env[["_function_list"]] <- lapply(1:length(rhss), function(i) wrap_function(rhss[[i]], 
-#>         pipes[[i]], parent))
-#>     env[["_fseq"]] <- `class<-`(eval(quote(function(value) freduce(value, 
-#>         `_function_list`)), env, env), c("fseq", "function"))
-#>     env[["freduce"]] <- freduce
-#>     if (is_placeholder(lhs)) {
-#>         env[["_fseq"]]
-#>     }
-#>     else {
-#>         env[["_lhs"]] <- eval(lhs, parent, parent)
-#>         result <- withVisible(eval(quote(`_fseq`(`_lhs`)), env, 
-#>             env))
-#>         if (is_compound_pipe(pipes[[1L]])) {
-#>             eval(call("<-", lhs, result[["value"]]), parent, 
-#>                 parent)
-#>         }
-#>         else {
-#>             if (result[["visible"]]) 
-#>                 result[["value"]]
-#>             else invisible(result[["value"]])
-#>         }
-#>     }
-#> }
-#> <bytecode: 0x000000001961f620>
-#> <environment: 0x000000001961c838>
-#> attr(,"class")
-#> [1] "pipe"     "function"
-#> attr(,"wrap")
+#> Pipe operator
+#> wrap:
 #> suppressWarnings(BODY)
 `%P>%`
-#> function (lhs, rhs) 
-#> {
-#>     parent <- parent.frame()
-#>     env <- new.env(parent = parent)
-#>     chain_parts <- split_chain(match.call(), env = env)
-#>     pipes <- chain_parts[["pipes"]]
-#>     rhss <- chain_parts[["rhss"]]
-#>     lhs <- chain_parts[["lhs"]]
-#>     env[["_function_list"]] <- lapply(1:length(rhss), function(i) wrap_function(rhss[[i]], 
-#>         pipes[[i]], parent))
-#>     env[["_fseq"]] <- `class<-`(eval(quote(function(value) freduce(value, 
-#>         `_function_list`)), env, env), c("fseq", "function"))
-#>     env[["freduce"]] <- freduce
-#>     if (is_placeholder(lhs)) {
-#>         env[["_fseq"]]
-#>     }
-#>     else {
-#>         env[["_lhs"]] <- eval(lhs, parent, parent)
-#>         result <- withVisible(eval(quote(`_fseq`(`_lhs`)), env, 
-#>             env))
-#>         if (is_compound_pipe(pipes[[1L]])) {
-#>             eval(call("<-", lhs, result[["value"]]), parent, 
-#>                 parent)
-#>         }
-#>         else {
-#>             if (result[["visible"]]) 
-#>                 result[["value"]]
-#>             else invisible(result[["value"]])
-#>         }
-#>     }
-#> }
-#> <bytecode: 0x000000001990d4d0>
-#> <environment: 0x0000000019912e40>
-#> attr(,"class")
-#> [1] "pipe"     "function"
-#> attr(,"wrap")
+#> Pipe operator
+#> wrap:
 #> {
 #>     message(deparse(quote(BODY)))
 #>     . <- print(BODY)
@@ -292,42 +194,8 @@ Take a look at the other functions to understand how to make your own :
 #>     .
 #> }
 `%summary>%`
-#> function (lhs, rhs) 
-#> {
-#>     parent <- parent.frame()
-#>     env <- new.env(parent = parent)
-#>     chain_parts <- split_chain(match.call(), env = env)
-#>     pipes <- chain_parts[["pipes"]]
-#>     rhss <- chain_parts[["rhss"]]
-#>     lhs <- chain_parts[["lhs"]]
-#>     env[["_function_list"]] <- lapply(1:length(rhss), function(i) wrap_function(rhss[[i]], 
-#>         pipes[[i]], parent))
-#>     env[["_fseq"]] <- `class<-`(eval(quote(function(value) freduce(value, 
-#>         `_function_list`)), env, env), c("fseq", "function"))
-#>     env[["freduce"]] <- freduce
-#>     if (is_placeholder(lhs)) {
-#>         env[["_fseq"]]
-#>     }
-#>     else {
-#>         env[["_lhs"]] <- eval(lhs, parent, parent)
-#>         result <- withVisible(eval(quote(`_fseq`(`_lhs`)), env, 
-#>             env))
-#>         if (is_compound_pipe(pipes[[1L]])) {
-#>             eval(call("<-", lhs, result[["value"]]), parent, 
-#>                 parent)
-#>         }
-#>         else {
-#>             if (result[["visible"]]) 
-#>                 result[["value"]]
-#>             else invisible(result[["value"]])
-#>         }
-#>     }
-#> }
-#> <bytecode: 0x000000001931d308>
-#> <environment: 0x0000000019349678>
-#> attr(,"class")
-#> [1] "pipe"     "function"
-#> attr(,"wrap")
+#> Pipe operator
+#> wrap:
 #> {
 #>     message(deparse(quote(BODY)))
 #>     . <- BODY
@@ -336,42 +204,8 @@ Take a look at the other functions to understand how to make your own :
 #>     .
 #> }
 `%strict>%`
-#> function (lhs, rhs) 
-#> {
-#>     parent <- parent.frame()
-#>     env <- new.env(parent = parent)
-#>     chain_parts <- split_chain(match.call(), env = env)
-#>     pipes <- chain_parts[["pipes"]]
-#>     rhss <- chain_parts[["rhss"]]
-#>     lhs <- chain_parts[["lhs"]]
-#>     env[["_function_list"]] <- lapply(1:length(rhss), function(i) wrap_function(rhss[[i]], 
-#>         pipes[[i]], parent))
-#>     env[["_fseq"]] <- `class<-`(eval(quote(function(value) freduce(value, 
-#>         `_function_list`)), env, env), c("fseq", "function"))
-#>     env[["freduce"]] <- freduce
-#>     if (is_placeholder(lhs)) {
-#>         env[["_fseq"]]
-#>     }
-#>     else {
-#>         env[["_lhs"]] <- eval(lhs, parent, parent)
-#>         result <- withVisible(eval(quote(`_fseq`(`_lhs`)), env, 
-#>             env))
-#>         if (is_compound_pipe(pipes[[1L]])) {
-#>             eval(call("<-", lhs, result[["value"]]), parent, 
-#>                 parent)
-#>         }
-#>         else {
-#>             if (result[["visible"]]) 
-#>                 result[["value"]]
-#>             else invisible(result[["value"]])
-#>         }
-#>     }
-#> }
-#> <bytecode: 0x0000000019da1798>
-#> <environment: 0x0000000019da47c8>
-#> attr(,"class")
-#> [1] "pipe"     "function"
-#> attr(,"wrap")
+#> Pipe operator
+#> wrap:
 #> {
 #>     current_warn <- options()$warn
 #>     options(warn = 2)
@@ -400,7 +234,6 @@ print info on intermediate steps with `pprint`
 ----------------------------------------------
 
 ``` r
-library(ggplot2)
 iris %>%
   pprint(~"hello")           %>%
   head(2)                    %>%
