@@ -23,9 +23,12 @@ freduce <- function (value, function_list)
   else invisible(value[["value"]])
 }
 
-# we needed to roll back to an older version of freduce because the new one
-# starts to execute from the right (inside out) so our text displays arrive in
-# the wrong order, maybe we can understand how it works and fix it 
+# The github version of magrittr has a new way to code freduce since 2016
+# CRAN version is from 2014
+# the new version seems to execute `x %>% f1 %>% f2` as `f2(f1(x))`
+# this is not good for our pipes with side effects
+# as it's been 2 years since this change and was not yet commited to CRAN, it
+# must not be that important, so we hardcode the current version to be safe
 
 # freduce <- function(value, function_list)
 # {
