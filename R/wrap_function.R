@@ -9,14 +9,10 @@
 #    function with an argument names `.` (a dot)
 # @param pipe a quoted magrittr pipe, which determines how the function is made.
 # @param env The environment in which to contruct the function.
-
-# @details Currently, the only distinction made is whether the pipe is a tee
-#   or not.
 #
 # @return a function of a single argument, named `.`.
 wrap_function <- function(body, pipe, env)
 {
-  #body <- eval(attr(eval(pipe),"body"))
   wrap <- attr(eval(pipe),"wrap")
   body <- eval(substitute(substitute(WRAP,list(BODY = body)), list(WRAP = wrap)))
   eval(call("function", as.pairlist(alist(.=)), body), env, env)

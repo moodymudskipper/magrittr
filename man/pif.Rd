@@ -21,19 +21,8 @@ Apply a transformation on the data only if a condition is met,
 by default if condition is not met the input is returned unchanged.
 }
 \details{
-The use of formula or functions is recommended over the use of expressions
-for the following reasons :
-
-\itemize{
-\item If \code{true} and/or \code{false} are provided as expressions they
-will be evaluated wether the condition is \code{TRUE} or \code{FALSE}.
-Functions or formulas on the other hand will be applied on the data only if
-the relevant condition is met
-\item Formulas support calling directly a column of the data by its name
-without \code{x$foo} notation.
-\item Dot notation will work in expressions only if \code{pif} is used in a pipe
-chain
-}
+Names of columns or list elements are made accessible as variable to all 3
+arguments wether they're given as expressions, functions or formulas
 }
 \examples{
 # using functions
@@ -42,7 +31,4 @@ iris \%>\% pif(is.data.frame, dim, nrow)
 iris \%>\% pif(~is.numeric(Species), ~"numeric :)",~paste(class(Species)[1],":("))
 # using expressions
 iris \%>\% pif(nrow(.) > 2, head(.,2))
-# careful with expressions
-iris \%>\% pif(TRUE, dim,  warning("this will be evaluated"))
- iris \%>\% pif(TRUE, dim, ~warning("this won't be evaluated"))
 }
