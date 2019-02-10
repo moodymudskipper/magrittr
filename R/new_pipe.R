@@ -9,6 +9,7 @@
 #' @param wrap an expression that will be executed after `BODY` is replaced by
 #'   the code that would have been run by `%>%` and `.` replaced by the
 #'   input
+#'   
 #' @examples 
 #' \dontrun{
 #' # How `%T>%` and `%$>%` were defined in this package 
@@ -53,7 +54,9 @@ is_pipe <- function(pipe)
 #' Method for friendly printing of pipe operators, traditional output can be
 #' obtained by calling `print.function(x)` 
 #'
-#' @param operator
+#' @param x operator
+#' @param ... not used, for compatibility with other methods
+#' 
 #' @export
 print.pipe <- function(x,...){
   message("Pipe operator")

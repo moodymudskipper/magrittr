@@ -1,129 +1,418 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+pipes
+=====
 
-# magrittr <a href='https:/magrittr.tidyverse.org'><img src='man/figures/logo.png' align="right" height="139" /></a>
-
-<!-- badges: start -->
-
-[![CRAN
-status](https://www.r-pkg.org/badges/version/magrittr)](https://cran.r-project.org/package=magrittr)
-[![Travis build
-status](https://travis-ci.org/tidyverse/magrittr.svg?branch=master)](https://travis-ci.org/tidyverse/magrittr)
-[![Codecov test
-coverage](https://codecov.io/gh/tidyverse/magrittr/branch/master/graph/badge.svg)](https://codecov.io/gh/tidyverse/magrittr?branch=master)
-<!-- badges: end -->
-
-## Overview
-
-The magrittr package offers a set of operators which make your code more
-readable by:
-
-  - structuring sequences of data operations left-to-right (as opposed
-    to from the inside and out),
-  - avoiding nested function calls,
-  - minimizing the need for local variables and function definitions,
-    and
-  - making it easy to add steps anywhere in the sequence of operations.
-
-The operators pipe their left-hand side values forward into expressions
-that appear on the right-hand side, i.e. one can replace `f(x)` with `x
-%>% f()`, where `%>%` is the (main) pipe-operator. When coupling several
-function calls with the pipe-operator, the benefit will become more
-apparent. Consider this pseudo example:
+Install and attach package:
 
 ``` r
-the_data <-
-  read.csv('/path/to/data/file.csv') %>%
-  subset(variable_a > x) %>%
-  transform(variable_c = variable_a/variable_b) %>%
-  head(100)
-```
-
-Four operations are performed to arrive at the desired data set, and
-they are written in a natural order: the same as the order of execution.
-Also, no temporary variables are needed. If yet another operation is
-required, it is straightforward to add to the sequence of operations
-wherever it may be needed.
-
-If you are new to magrittr, the best place to start is the [pipes
-chapter](http://r4ds.had.co.nz/pipes.html) in R for data science.
-
-## Installation
-
-``` r
-# The easiest way to get magrittr is to install the whole tidyverse:
-install.packages("tidyverse")
-
-# Alternatively, install just magrittr:
-install.packages("magrittr")
-
-# Or the development version from GitHub:
 # install.packages("devtools")
-devtools::install_github("tidyverse/magrittr")
+devtools::install_github("moodymudskipper/pipes")
+library(pipes)
 ```
 
-## Usage
+The *pipes* package expands the *magrittr* package by providing : \* More pipe operator for debuggind, printing extra info, suppressing warnings or messages and more. \* A convenient way to create custom pipes \* A couple of pipe friendly functions for printing (`pprint`) and testing (`pif`).
 
-### Basic piping
+The package works just as magrittr except that: \* `alias` functions were not imported \* pipes have a class `pipe` and have a dedicated printing method
 
-  - `x %>% f` is equivalent to `f(x)`
-  - `x %>% f(y)` is equivalent to `f(x, y)`
-  - `x %>% f %>% g %>% h` is equivalent to `h(g(f(x)))`
+*magrittr* doesn't need to be attached, but attaching it before *pipes* will make the alias functions available.
 
-Here, “equivalent” is not technically exact: evaluation is non-standard,
-and the left-hand side is evaluated before passed on to the right-hand
-side expression. However, in most cases this has no practical
-implication.
+New operators
+-------------
 
-### The argument placeholder
+-   **%D&gt;%** : Debug the pipe chain at the relevant step
+-   **%V&gt;%** : Use `View()` on the output
+-   **%L&gt;%** : Log the relevant call and execution time to the console
+-   **%P&gt;%** : Use `print()` on the output
+-   **%summary&gt;%** : Print the `summary()` off the output
+-   **%glimpse&gt;%** : Use `tibble::glimpse()` on the output
+-   **%skim&gt;%** : Use `skimr::skim()` on the output
+-   **%nowarn&gt;%** : Silence warnings
+-   **%nomsg&gt;%** : Silence messages
+-   **%strict&gt;%** : Fail on warning
+-   **%quietly&gt;%** : Try, and in case of failure prints error and returns input
+-   **%auto\_browse&gt;%** : Use `purrr::auto_browse()` to debug right before the error happens}
 
-  - `x %>% f(y, .)` is equivalent to `f(y, x)`
-  - `x %>% f(y, z = .)` is equivalent to `f(y, z = x)`
+new operators
+-------------
 
-### Re-using the placeholder for attributes
+We demonstrate a few operators
 
-It is straightforward to use the placeholder several times in a
-right-hand side expression. However, when the placeholder only appears
-in a nested expressions magrittr will still apply the first-argument
-rule. The reason is that in most cases this results more clean code.
-
-`x %>% f(y = nrow(.), z = ncol(.))` is equivalent to `f(x, y = nrow(x),
-z = ncol(x))`
-
-The behavior can be overruled by enclosing the right-hand side in
-braces:
-
-`x %>% {f(y = nrow(.), z = ncol(.))}` is equivalent to `f(y = nrow(x), z
-= ncol(x))`
-
-### Building (unary) functions
-
-Any pipeline starting with the `.` will return a function which can
-later be used to apply the pipeline to values. Building functions in
-magrittr is therefore similar to building other values.
+Silence a warning:
 
 ``` r
-f <- . %>% cos %>% sin 
-# is equivalent to 
-f <- function(.) sin(cos(.)) 
+-1  %nowarn>% sqrt
+#> [1] NaN
 ```
 
-### Pipe with exposition of variables
-
-Many functions accept a data argument, e.g. `lm` and `aggregate`, which
-is very useful in a pipeline where data is first processed and then
-passed into such a function. There are also functions that do not have a
-data argument, for which it is useful to expose the variables in the
-data. This is done with the `%$%` operator:
+Log steps in the console:
 
 ``` r
+iris %L>% {Sys.sleep(1);head(.,2)} %L>% {Sys.sleep(2);.[4:5]}
+#> {
+#>     Sys.sleep(1)
+#>     head(., 2)
+#> }   ~ ... 1 sec
+#> {
+#>     Sys.sleep(2)
+#>     .[4:5]
+#> }   ~ ... 2 sec
+#>   Petal.Width Species
+#> 1         0.2  setosa
+#> 2         0.2  setosa
+```
+
+Use print, summary or glimpse on output:
+
+``` r
+iris %P>% head(2) %P>% `[`(4:5)
+#> head(., 2)
+#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#> 1          5.1         3.5          1.4         0.2  setosa
+#> 2          4.9         3.0          1.4         0.2  setosa
+#> .[4:5]
+#>   Petal.Width Species
+#> 1         0.2  setosa
+#> 2         0.2  setosa
+#>   Petal.Width Species
+#> 1         0.2  setosa
+#> 2         0.2  setosa
+
+iris %summary>% head(2) %summary>% `[`(4:5)
+#> head(., 2)
+#>   Sepal.Length   Sepal.Width     Petal.Length  Petal.Width        Species 
+#>  Min.   :4.90   Min.   :3.000   Min.   :1.4   Min.   :0.2   setosa    :2  
+#>  1st Qu.:4.95   1st Qu.:3.125   1st Qu.:1.4   1st Qu.:0.2   versicolor:0  
+#>  Median :5.00   Median :3.250   Median :1.4   Median :0.2   virginica :0  
+#>  Mean   :5.00   Mean   :3.250   Mean   :1.4   Mean   :0.2                 
+#>  3rd Qu.:5.05   3rd Qu.:3.375   3rd Qu.:1.4   3rd Qu.:0.2                 
+#>  Max.   :5.10   Max.   :3.500   Max.   :1.4   Max.   :0.2
+#> .[4:5]
+#>   Petal.Width        Species 
+#>  Min.   :0.2   setosa    :2  
+#>  1st Qu.:0.2   versicolor:0  
+#>  Median :0.2   virginica :0  
+#>  Mean   :0.2                 
+#>  3rd Qu.:0.2                 
+#>  Max.   :0.2
+#>   Petal.Width Species
+#> 1         0.2  setosa
+#> 2         0.2  setosa
+
+iris %glimpse>% head(2) %glimpse>% `[`(4:5)
+#> Loading required namespace: tibble
+#> head(., 2)
+#> Observations: 2
+#> Variables: 5
+#> $ Sepal.Length <dbl> 5.1, 4.9
+#> $ Sepal.Width  <dbl> 3.5, 3.0
+#> $ Petal.Length <dbl> 1.4, 1.4
+#> $ Petal.Width  <dbl> 0.2, 0.2
+#> $ Species      <fct> setosa, setosa
+#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#> 1          5.1         3.5          1.4         0.2  setosa
+#> 2          4.9         3.0          1.4         0.2  setosa
+#> .[4:5]
+#> Observations: 2
+#> Variables: 2
+#> $ Petal.Width <dbl> 0.2, 0.2
+#> $ Species     <fct> setosa, setosa
+#>   Petal.Width Species
+#> 1         0.2  setosa
+#> 2         0.2  setosa
+#>   Petal.Width Species
+#> 1         0.2  setosa
+#> 2         0.2  setosa
+```
+
+view steps of chain in the viewer:
+
+``` r
+iris %V>% head(2) %V>% `[`(4:5)
+```
+
+debug the chain:
+
+``` r
+iris %>% head(2) %D>% `[`(4:5)
+```
+
+`new_pipe`
+----------
+
+It's easier to understand how to build a new `pipe` by looking at examples.
+
+``` r
+ `%T>%`
+#> function (lhs, rhs) 
+#> {
+#>     parent <- parent.frame()
+#>     env <- new.env(parent = parent)
+#>     chain_parts <- split_chain(match.call(), env = env)
+#>     pipes <- chain_parts[["pipes"]]
+#>     rhss <- chain_parts[["rhss"]]
+#>     lhs <- chain_parts[["lhs"]]
+#>     env[["_function_list"]] <- lapply(1:length(rhss), function(i) wrap_function(rhss[[i]], 
+#>         pipes[[i]], parent))
+#>     env[["_fseq"]] <- `class<-`(eval(quote(function(value) freduce(value, 
+#>         `_function_list`)), env, env), c("fseq", "function"))
+#>     env[["freduce"]] <- freduce
+#>     if (is_placeholder(lhs)) {
+#>         env[["_fseq"]]
+#>     }
+#>     else {
+#>         env[["_lhs"]] <- eval(lhs, parent, parent)
+#>         result <- withVisible(eval(quote(`_fseq`(`_lhs`)), env, 
+#>             env))
+#>         if (is_compound_pipe(pipes[[1L]])) {
+#>             eval(call("<-", lhs, result[["value"]]), parent, 
+#>                 parent)
+#>         }
+#>         else {
+#>             if (result[["visible"]]) 
+#>                 result[["value"]]
+#>             else invisible(result[["value"]])
+#>         }
+#>     }
+#> }
+#> <bytecode: 0x00000000177fd460>
+#> <environment: 0x00000000170b8d58>
+#> attr(,"class")
+#> [1] "pipe"     "function"
+#> attr(,"wrap")
+#> {
+#>     local(BODY)
+#>     .
+#> }
+```
+
+If we want to rebuild this operator from scratch, all we have to do is :
+
+``` r
+`%newT>%` <- new_pipe({
+  local(BODY)
+  .
+})
+```
+
+`.` is the value of the input and `BODY` contains the code that would have been executed by `%>%`, for example `iris %>% head(3)` `BODY` would be `head(.,3)`.
+
+so what `%newT>%` is doing is executing the call in a protected environment through `local(BODY)`, then returning the unaltered input `.`.
+
+``` r
+iris %>% head(2) %newT>% print %>% head(1)
+#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#> 1          5.1         3.5          1.4         0.2  setosa
+#> 2          4.9         3.0          1.4         0.2  setosa
+#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#> 1          5.1         3.5          1.4         0.2  setosa
+```
+
+Take a look at the other functions to understand how to make your own :
+
+``` r
+`%nowarn>%`
+#> function (lhs, rhs) 
+#> {
+#>     parent <- parent.frame()
+#>     env <- new.env(parent = parent)
+#>     chain_parts <- split_chain(match.call(), env = env)
+#>     pipes <- chain_parts[["pipes"]]
+#>     rhss <- chain_parts[["rhss"]]
+#>     lhs <- chain_parts[["lhs"]]
+#>     env[["_function_list"]] <- lapply(1:length(rhss), function(i) wrap_function(rhss[[i]], 
+#>         pipes[[i]], parent))
+#>     env[["_fseq"]] <- `class<-`(eval(quote(function(value) freduce(value, 
+#>         `_function_list`)), env, env), c("fseq", "function"))
+#>     env[["freduce"]] <- freduce
+#>     if (is_placeholder(lhs)) {
+#>         env[["_fseq"]]
+#>     }
+#>     else {
+#>         env[["_lhs"]] <- eval(lhs, parent, parent)
+#>         result <- withVisible(eval(quote(`_fseq`(`_lhs`)), env, 
+#>             env))
+#>         if (is_compound_pipe(pipes[[1L]])) {
+#>             eval(call("<-", lhs, result[["value"]]), parent, 
+#>                 parent)
+#>         }
+#>         else {
+#>             if (result[["visible"]]) 
+#>                 result[["value"]]
+#>             else invisible(result[["value"]])
+#>         }
+#>     }
+#> }
+#> <bytecode: 0x000000001961f620>
+#> <environment: 0x000000001961c838>
+#> attr(,"class")
+#> [1] "pipe"     "function"
+#> attr(,"wrap")
+#> suppressWarnings(BODY)
+`%P>%`
+#> function (lhs, rhs) 
+#> {
+#>     parent <- parent.frame()
+#>     env <- new.env(parent = parent)
+#>     chain_parts <- split_chain(match.call(), env = env)
+#>     pipes <- chain_parts[["pipes"]]
+#>     rhss <- chain_parts[["rhss"]]
+#>     lhs <- chain_parts[["lhs"]]
+#>     env[["_function_list"]] <- lapply(1:length(rhss), function(i) wrap_function(rhss[[i]], 
+#>         pipes[[i]], parent))
+#>     env[["_fseq"]] <- `class<-`(eval(quote(function(value) freduce(value, 
+#>         `_function_list`)), env, env), c("fseq", "function"))
+#>     env[["freduce"]] <- freduce
+#>     if (is_placeholder(lhs)) {
+#>         env[["_fseq"]]
+#>     }
+#>     else {
+#>         env[["_lhs"]] <- eval(lhs, parent, parent)
+#>         result <- withVisible(eval(quote(`_fseq`(`_lhs`)), env, 
+#>             env))
+#>         if (is_compound_pipe(pipes[[1L]])) {
+#>             eval(call("<-", lhs, result[["value"]]), parent, 
+#>                 parent)
+#>         }
+#>         else {
+#>             if (result[["visible"]]) 
+#>                 result[["value"]]
+#>             else invisible(result[["value"]])
+#>         }
+#>     }
+#> }
+#> <bytecode: 0x000000001990d4d0>
+#> <environment: 0x0000000019912e40>
+#> attr(,"class")
+#> [1] "pipe"     "function"
+#> attr(,"wrap")
+#> {
+#>     message(deparse(quote(BODY)))
+#>     . <- print(BODY)
+#>     cat("\n")
+#>     .
+#> }
+`%summary>%`
+#> function (lhs, rhs) 
+#> {
+#>     parent <- parent.frame()
+#>     env <- new.env(parent = parent)
+#>     chain_parts <- split_chain(match.call(), env = env)
+#>     pipes <- chain_parts[["pipes"]]
+#>     rhss <- chain_parts[["rhss"]]
+#>     lhs <- chain_parts[["lhs"]]
+#>     env[["_function_list"]] <- lapply(1:length(rhss), function(i) wrap_function(rhss[[i]], 
+#>         pipes[[i]], parent))
+#>     env[["_fseq"]] <- `class<-`(eval(quote(function(value) freduce(value, 
+#>         `_function_list`)), env, env), c("fseq", "function"))
+#>     env[["freduce"]] <- freduce
+#>     if (is_placeholder(lhs)) {
+#>         env[["_fseq"]]
+#>     }
+#>     else {
+#>         env[["_lhs"]] <- eval(lhs, parent, parent)
+#>         result <- withVisible(eval(quote(`_fseq`(`_lhs`)), env, 
+#>             env))
+#>         if (is_compound_pipe(pipes[[1L]])) {
+#>             eval(call("<-", lhs, result[["value"]]), parent, 
+#>                 parent)
+#>         }
+#>         else {
+#>             if (result[["visible"]]) 
+#>                 result[["value"]]
+#>             else invisible(result[["value"]])
+#>         }
+#>     }
+#> }
+#> <bytecode: 0x000000001931d308>
+#> <environment: 0x0000000019349678>
+#> attr(,"class")
+#> [1] "pipe"     "function"
+#> attr(,"wrap")
+#> {
+#>     message(deparse(quote(BODY)))
+#>     . <- BODY
+#>     print(summary(.))
+#>     cat("\n")
+#>     .
+#> }
+`%strict>%`
+#> function (lhs, rhs) 
+#> {
+#>     parent <- parent.frame()
+#>     env <- new.env(parent = parent)
+#>     chain_parts <- split_chain(match.call(), env = env)
+#>     pipes <- chain_parts[["pipes"]]
+#>     rhss <- chain_parts[["rhss"]]
+#>     lhs <- chain_parts[["lhs"]]
+#>     env[["_function_list"]] <- lapply(1:length(rhss), function(i) wrap_function(rhss[[i]], 
+#>         pipes[[i]], parent))
+#>     env[["_fseq"]] <- `class<-`(eval(quote(function(value) freduce(value, 
+#>         `_function_list`)), env, env), c("fseq", "function"))
+#>     env[["freduce"]] <- freduce
+#>     if (is_placeholder(lhs)) {
+#>         env[["_fseq"]]
+#>     }
+#>     else {
+#>         env[["_lhs"]] <- eval(lhs, parent, parent)
+#>         result <- withVisible(eval(quote(`_fseq`(`_lhs`)), env, 
+#>             env))
+#>         if (is_compound_pipe(pipes[[1L]])) {
+#>             eval(call("<-", lhs, result[["value"]]), parent, 
+#>                 parent)
+#>         }
+#>         else {
+#>             if (result[["visible"]]) 
+#>                 result[["value"]]
+#>             else invisible(result[["value"]])
+#>         }
+#>     }
+#> }
+#> <bytecode: 0x0000000019da1798>
+#> <environment: 0x0000000019da47c8>
+#> attr(,"class")
+#> [1] "pipe"     "function"
+#> attr(,"wrap")
+#> {
+#>     current_warn <- options()$warn
+#>     options(warn = 2)
+#>     on.exit(options(warn = current_warn))
+#>     BODY
+#> }
+```
+
+easy conditional steps with `pif`
+---------------------------------
+
+Using functions, formulas or expressions
+
+``` r
+iris %>% pif(is.data.frame, dim, nrow)
+#> [1] 150   5
+iris %>% pif(~is.numeric(Species), ~"numeric :)",~paste(class(Species)[1],":("))
+#> [1] "factor :("
+iris %>% pif(nrow(iris) > 2, head(iris,2))
+#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#> 1          5.1         3.5          1.4         0.2  setosa
+#> 2          4.9         3.0          1.4         0.2  setosa
+```
+
+print info on intermediate steps with `pprint`
+----------------------------------------------
+
+``` r
+library(ggplot2)
 iris %>%
-  subset(Sepal.Length > mean(Sepal.Length)) %$%
-  cor(Sepal.Length, Sepal.Width)
-#> [1] 0.3361992
-
-data.frame(z = rnorm(100)) %$%
-  ts.plot(z)
+  pprint(~"hello")           %>%
+  head(2)                    %>%
+  transform(Species = NULL)  %>%
+  pprint(rowSums,na.rm = TRUE) %>%
+  pprint(~setNames(.[1:2],toupper(names(.[1:2])))) %>%
+  pprint(dim)
+#> [1] "hello"
+#>    1    2 
+#> 10.2  9.5 
+#>   SEPAL.LENGTH SEPAL.WIDTH
+#> 1          5.1         3.5
+#> 2          4.9         3.0
+#> [1] 2 4
 ```
-
-![](man/figures/exposition-1.png)<!-- -->

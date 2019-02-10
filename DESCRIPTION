@@ -13,9 +13,14 @@ License: MIT + file LICENSE
 URL: http://magrittr.tidyverse.org,
     https://github.com/tidyverse/magrittr
 BugReports: https://github.com/tidyverse/magrittr/issues
+Suggests: knitr,
+    rmarkdown,
+    purrr,
+    rlang,
+    arsenal,
+    testthat
 Depends: magrittr 
-VignetteBuilder: 
-    knitr
+VignetteBuilder: knitr
 ByteCompile: Yes
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -8,12 +8,12 @@ new_pipe(wrap = {     BODY })
 }
 \arguments{
 \item{wrap}{an expression that will be executed after \code{BODY} is replaced by
-the code that would have been run by \code{`%>%` and `.` replaced by the
-  input}}
+the code that would have been run by \code{\%>\%} and \code{.} replaced by the
+input}
 }
 \description{
 Create a new pipe by wrapping new code around what would have been executed
-by the standard \code{\code{\%>\%}} pipe.
+by the standard \code{\%>\%} pipe.
 }
 \details{
 Printing existing pipes from the \emph{pipes} package will provide examples to

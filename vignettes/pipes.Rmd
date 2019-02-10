@@ -1,15 +1,18 @@
 ---
-output: github_document
+title: "pipes package"
+author: Antoine Fabri
+date: February, 2018
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introducing magrittr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
 ---
 
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/"
-)
+```{r include = FALSE}
 library(pipes)
+options(scipen = 3)
+knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 ```
 
 

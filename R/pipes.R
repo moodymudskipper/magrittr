@@ -192,9 +192,10 @@ NULL
 #' @rdname pipeops
 #' @export
 `%compare>%` <- new_pipe({
+  if (!requireNamespace("arsenal"))
+    stop("The package `arsenal` must be installed to use `%quietly>%`")
   message(deparse(quote(BODY)))
   output <- BODY
-  # `ignore*` parameters are passed to the tbl_df method
   print(summary(arsenal::compare(., output)))
   cat("\n")
   output
@@ -204,6 +205,10 @@ NULL
 #' @rdname pipeops
 #' @export
 `%quietly>%` <- new_pipe({
+  if (!requireNamespace("purrr"))
+    stop("The package `purrr` must be installed to use `%quietly>%`")
+  if (!requireNamespace("rlang"))
+    stop("The package `rlang` must be installed to use `%quietly>%`")
   message(deparse(quote(BODY)))
   fml <- bquote(~.(quote(BODY)))
   fun <- rlang::as_function(fml)
@@ -216,6 +221,8 @@ NULL
 #' @rdname pipeops
 #' @export
 `%auto_browse>%` <- new_pipe({
+  if (!requireNamespace("skimr"))
+    stop("The package `skimr` must be installed to use `%skim>%`")
   message(deparse(quote(BODY)))
   fml <- bquote(~.(quote(BODY)))
   fun <- rlang::as_function(fml)

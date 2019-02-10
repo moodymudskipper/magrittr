@@ -64,7 +64,7 @@ pif <- function(x, p, true, false = identity){
 #' head(2)                    %>%
 #' transform(Species = NULL)  %>%
 #' pprint(rowSums,na.rm=TRUE) %>%
-#' pprint(~dplyr::rename_all(.[1:2],toupper)) %>%
+#' pprint(~setNames(.,toupper(names(.)))) %>%
 #' pprint(dim)
 pprint <- function(.data,.fun,...){
   if (inherits(.fun, "formula"))
