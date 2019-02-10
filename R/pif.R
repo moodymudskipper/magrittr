@@ -43,7 +43,3 @@ pif <- function(x, p, true, false = identity){
   
   res
 }
-# #  
-# debugonce(pif)
-# iris %>% pif(is.numeric(Species), "numeric :)",paste(class(Species)[1],":("))
-# iris %>% pif(~is.numeric(Species), ~"numeric :)",~paste(class(Species)[1],":("))
