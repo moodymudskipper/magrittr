@@ -27,12 +27,14 @@ library(pipes)
 ```
 
 The *pipes* package expands the *magrittr* package by providing :
+
 * More pipe operators to debug, print extra info, suppress warnings or
 messages etc
 * A convenient way to create custom pipes
 * A couple of pipe friendly functions for printing (`pprint`) and testing (`pif`).
 
 The package works just as magrittr except that:
+
 * `alias` functions were not imported
 * pipes have a class `pipe` and have a dedicated printing method
 
