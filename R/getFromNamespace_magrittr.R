@@ -50,7 +50,7 @@ debug_fseq <- magrittr::debug_fseq
 
 #' undebug_fseq
 #' 
-#' Reexported from \code{\link[magrittr]{undebug_fseq}}
+#' Reexported from \code{\link[magrittr]{debug_fseq}}
 #' @inheritParams magrittr::undebug_fseq
 #' @export
 undebug_fseq <- magrittr::undebug_fseq
@@ -76,7 +76,7 @@ functions <- magrittr::functions
 #' Reexported from \code{\link[magrittr]{[.fseq}}
 #' @inheritParams magrittr::`[.fseq`
 #' @export
-`[[.fseq` <- getFromNamespace("[[.fseq","magrittr")
+`[[.fseq` <- getFromNamespace("[.fseq","magrittr")
 
 #' print.fseq
 #' 
