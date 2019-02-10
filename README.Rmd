@@ -24,8 +24,8 @@ library(pipes)
 ```
 
 The *pipes* package expands the *magrittr* package by providing :
-* More pipe operator for debuggind, printing extra info, suppressing warnings or
-messages and more.
+* More pipe operators to debug, print extra info, suppress warnings or
+messages etc
 * A convenient way to create custom pipes
 * A couple of pipe friendly functions for printing (`pprint`) and testing (`pif`).
 

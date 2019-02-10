@@ -1,28 +1,11 @@
-# magrittr 1.5.0.9000
+# Introducing `pipes` package
 
-# magrittr 1.5
+The package `mmpipe` had similar features but was based on hacks modifying
+`magrittr`'s namespace. The package `pipes` takes a much cleaner approach.
 
-## New features
-
-### Functional sequences.
-A pipeline, or a "functional sequence", need not be applied
-to a left-hand side value instantly. Instead it can serve as
-a function definition. A pipeline where the left-most left-hand
-side is the magrittr placeholder (the dot `.`) will thus create a
-function, which applies each right-hand side in sequence to its
-argument, e.g. `f <- . %>% abs %>% mean(na.rm = TRUE)`.
-
-### New operators
-Three new operators are introduced for some special cases
-
-* Assignment pipe: `%<>%`
-* Tee pipe: `%T>%`
-* Exposition pipe: `%$%`
-
-For more information see the documentation, e.g. `?%T>%`.
-
-### Lambdas
-Lambdas can now be made by enclosing several statements in curly braces,
-and is a unary function of the dot argument.
-
-For more information and examples, see the updated vignette, and help files.
+The most important differences are :
+* The pipe operators contain the info about what they do, it's not burried into
+the code through symbol recognition
+* pipe can be easily created and removed, as regular objects
+* pipes gain a class `pipe` and a printing method
+* some pipes were renamed, and some others were added or combined
