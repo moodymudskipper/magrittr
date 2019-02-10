@@ -1,9 +1,7 @@
 # Wrap an expression in a function
 # 
 # This function takes the "body" part of a function and wraps it in
-# a function. The return value depends on whether the function is created
-# for its side effect with the tee operator. If the operator is \code{\%$\%}
-# then the expression will be evaluated in a `with(., )` statement.
+# a function.
 #
 # @param body an expression which will serve as function body in single-argument
 #    function with an argument names `.` (a dot)
@@ -18,6 +16,13 @@ wrap_function <- function(body, pipe, env)
   eval(call("function", as.pairlist(alist(.=)), body), env, env)
 }
 
+# about freduce:
+# The github version of magrittr has a new way to code freduce since 2016
+# CRAN version is from 2014
+# the new version seems to execute `x %>% f1 %>% f2` as `f2(f1(x))`
+# this is not good for our pipes with side effects
+# as it's been 2 years since this change and was not yet commited to CRAN, it
+# must not be that important, so we hardcode the current version to be safe
 
 #' Apply a list of functions sequentially
 #'
@@ -44,12 +49,7 @@ freduce <- function (value, function_list)
   else invisible(value[["value"]])
 }
 
-# The github version of magrittr has a new way to code freduce since 2016
-# CRAN version is from 2014
-# the new version seems to execute `x %>% f1 %>% f2` as `f2(f1(x))`
-# this is not good for our pipes with side effects
-# as it's been 2 years since this change and was not yet commited to CRAN, it
-# must not be that important, so we hardcode the current version to be safe
+# new github version :
 
 # freduce <- function(value, function_list)
 # {

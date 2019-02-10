@@ -38,10 +38,10 @@ new_pipe <- function(wrap = {BODY})
   fun
 }
 
-#' Check whether a symbol is a valid magrittr pipe.
+#' Check whether a symbol is a valid pipe.
 #'
 #' @param pipe A quoted symbol
-#' @return logical - TRUE if a valid magrittr pipe, FALSE otherwise.
+#' @return logical - TRUE if a valid pipe, FALSE otherwise.
 #' @export
 is_pipe <- function(pipe)
 {
