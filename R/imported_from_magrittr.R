@@ -1,1 +1,0 @@
-pipe <- getFromNamespace("pipe","magrittr")
