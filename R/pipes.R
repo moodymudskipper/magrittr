@@ -1,13 +1,3 @@
-# new functions are in this file
-# other modified functions are :
-# is_pipe in is_something.R
-# pipe in pipe.R
-# `%T>%` in pipe.R
-# `%$>%` in pipe.R
-# wrap_function in wrap_function.R
-# we had to go back to the old freduce so that our debug calls are called
-# 
-
 #' Pipe operators to enhance magrittr
 #'
 #' These operators include  magrittr's standard pipe operators `%>%`,
@@ -85,36 +75,34 @@
 #' -1 %strict>% sqrt
 #' }
 #' 
-#' 
-
-#' @name pipes
+#' @name pipeops
 NULL
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%>%`  <- new_pipe({BODY})
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%<>%` <- new_pipe({BODY})
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%T>%` <- new_pipe({local(BODY);.})
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%$%` <- new_pipe(with(., BODY)) 
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%nowarn>%` <- new_pipe(suppressWarnings(BODY))
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%nomsg>%` <- new_pipe(suppressMessages(BODY))
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%strict>%` <- new_pipe({
   current_warn <- options()$warn
@@ -122,12 +110,12 @@ NULL
   on.exit(options(warn = current_warn))
   BODY})
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%try>%` <- new_pipe(
   {res <- try(BODY); if (inherits(res,"try-error")) . else res})
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%P>%` <- new_pipe({
   message(deparse(quote(BODY)))
@@ -135,21 +123,21 @@ NULL
   cat("\n")
   .})
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%V>%` <- new_pipe({
   . <- BODY
   View(., deparse(quote(BODY)))
   .})
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%D>%` <- new_pipe({
     pipe_browse <- as.function(alist(BODY))
     debugonce(pipe_browse)
     pipe_browse()})
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%summary>%` <- new_pipe({
   message(deparse(quote(BODY)))
@@ -157,7 +145,7 @@ NULL
   cat("\n")
   .})
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%glimpse>%` <- new_pipe({
   if (!requireNamespace("tibble"))
@@ -168,7 +156,7 @@ NULL
   cat("\n")
   .})
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%skim>%` <- new_pipe({
   if (!requireNamespace("skimr"))
@@ -179,7 +167,7 @@ NULL
   cat("\n")
   .})
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%L>%` <- new_pipe({
   cat(paste(deparse(quote(BODY)), collapse = "\n"),"  ~ ...")
@@ -187,7 +175,7 @@ NULL
   .
   })
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%ae>%` <- new_pipe({
   message(deparse(quote(BODY)))
@@ -201,7 +189,7 @@ NULL
   output
 })
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%compare>%` <- new_pipe({
   message(deparse(quote(BODY)))
@@ -213,33 +201,19 @@ NULL
 })
 
 
-#' @rdname pipes
-#' @export
-`%safely>%` <- new_pipe({
-  message(deparse(quote(BODY)))
-  fml <- bquote(~.(quote(BODY)))
-  fun <- rlang::as_function(fml)
-  output <- purrr::quietly(fun)(.)
-  output$summary <- summary(output$res)
-  print(summary(arsenal::compare(., output)))
-  cat("\n")
-  output[2:3]
-})
-
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%quietly>%` <- new_pipe({
   message(deparse(quote(BODY)))
   fml <- bquote(~.(quote(BODY)))
   fun <- rlang::as_function(fml)
   output <- purrr::quietly(fun)(.)
-  output$summary <- summary(output$res)
-  print(summary(arsenal::compare(., output)))
+  print(output[-1])
   cat("\n")
-  output[c(5,2:4)]
+  output[[1]]
 })
 
-#' @rdname pipes
+#' @rdname pipeops
 #' @export
 `%auto_browse>%` <- new_pipe({
   message(deparse(quote(BODY)))

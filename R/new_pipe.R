@@ -36,3 +36,31 @@ new_pipe <- function(wrap = {BODY})
   
   fun
 }
+
+#' Check whether a symbol is a valid magrittr pipe.
+#'
+#' @param pipe A quoted symbol
+#' @return logical - TRUE if a valid magrittr pipe, FALSE otherwise.
+#' @export
+is_pipe <- function(pipe)
+{
+  inherits(eval(pipe),"pipe")
+}
+
+
+#' Print pipe operator
+#'
+#' Method for friendly printing of pipe operators, traditional output can be
+#' obtained by calling `print.function(x)` 
+#'
+#' @param operator
+#' @export
+print.pipe <- function(x,...){
+  message("Pipe operator")
+  cat("wrap:\n")
+  print(attr(x,"wrap"))
+  invisible(x)
+}
+
+
+
