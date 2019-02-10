@@ -1,14 +1,14 @@
 #' Create a new pipe operator.
 #'
 #' Create a new pipe by wrapping new code around what would have been executed
-#' by the standard \code{`%>%`} pipe.
+#' by the standard `%>%` pipe.
 #' 
 #' Printing existing pipes from the *pipes* package will provide examples to
 #' build on. 
 #' 
 #' @param wrap an expression that will be executed after `BODY` is replaced by
-#'   the code that would have been run by \code{`%>%` and `.` replaced by the
-#'   input}
+#'   the code that would have been run by `%>%` and `.` replaced by the
+#'   input
 #' @examples 
 #' \dontrun{
 #' # How `%T>%` and `%$>%` were defined in this package 

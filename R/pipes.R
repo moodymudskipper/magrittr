@@ -10,14 +10,14 @@
 
 #' Pipe operators to enhance magrittr
 #'
-#' These operators include  magrittr's standard pipe operators \code{\%>%\},
-#' \code{\%T>%\}, \code{\%$%\} and \code{\%<>%\} and additional ones which 
-#' provide side effects but mostly return the same output as \code{\%>%\}
-#' (with the exception of \code{\%strict>%\} and \code{\%try>%\}). 
+#' These operators include  magrittr's standard pipe operators `%>%`,
+#' `%T>%`, `%$%` and `%<>%` and additional ones which 
+#' provide side effects but mostly return the same output as `%>%`
+#' (with the exception of `%strict>%` and `%try>%`). 
 #' 
 #' In *magrittr* pipe operators are all the same functions, and are recognized
 #' in the code by their names, in *mmpipe* they inherit from the class `pipe` 
-#' and their behavior is ruled by their attribute `wrap` explained in \link{new_pipe}}.
+#' and their behavior is ruled by their attribute `wrap` explained in \link{new_pipe}.
 #' They also have their own printing method.
 #'
 #' \describe{
@@ -94,7 +94,7 @@ NULL
 #' @export
 `%>%`  <- new_pipe({BODY})
 
-#' @rdname compound
+#' @rdname pipes
 #' @export
 `%<>%` <- new_pipe({BODY})
 
@@ -215,14 +215,36 @@ NULL
 
 #' @rdname pipes
 #' @export
+`%safely>%` <- new_pipe({
+  message(deparse(quote(BODY)))
+  fml <- bquote(~.(quote(BODY)))
+  fun <- rlang::as_function(fml)
+  output <- purrr::quietly(fun)(.)
+  output$summary <- summary(output$res)
+  print(summary(arsenal::compare(., output)))
+  cat("\n")
+  output[2:3]
+})
+
+#' @rdname pipes
+#' @export
 `%quietly>%` <- new_pipe({
   message(deparse(quote(BODY)))
   fml <- bquote(~.(quote(BODY)))
   fun <- rlang::as_function(fml)
   output <- purrr::quietly(fun)(.)
   output$summary <- summary(output$res)
-  # `ignore*` parameters are passed to the tbl_df method
   print(summary(arsenal::compare(., output)))
   cat("\n")
+  output[c(5,2:4)]
+})
+
+#' @rdname pipes
+#' @export
+`%auto_browse>%` <- new_pipe({
+  message(deparse(quote(BODY)))
+  fml <- bquote(~.(quote(BODY)))
+  fun <- rlang::as_function(fml)
+  output <- purrr::auto_browse(fun)(.)
   output
 })
