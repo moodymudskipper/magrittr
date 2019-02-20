@@ -16,7 +16,7 @@ The *pipes* package expands the *magrittr* package by providing :
 -   A convenient way to create custom pipes
 -   A couple of pipe friendly functions for printing (`pprint`) and testing (`pif`).
 
-The package works just as magrittr except that:
+The package works just as *magrittr* except that:
 
 -   `alias` functions were not imported
 -   pipes have a class `pipe` and have a dedicated printing method
@@ -26,26 +26,34 @@ The package works just as magrittr except that:
 New operators
 -------------
 
--   **%D&gt;%** : Debug the pipe chain at the relevant step
--   **%V&gt;%** : Use `View()` on the output
--   **%L&gt;%** : Log the relevant call and execution time to the console
--   **%P&gt;%** : Use `print()` on the output
--   **%summary&gt;%** : Print the `summary()` off the output
--   **%glimpse&gt;%** : Use `tibble::glimpse()` on the output
--   **%skim&gt;%** : Use `skimr::skim()` on the output
--   **%nowarn&gt;%** : Silence warnings
--   **%nomsg&gt;%** : Silence messages
--   **%strict&gt;%** : Fail on warning
--   **%quietly&gt;%** : Try, and in case of failure prints error and returns input
--   **%auto\_browse&gt;%** : Use `purrr::auto_browse()` to debug right before the error happens}
+-   **`%D>%`** : Debug the pipe chain at the relevant step
+-   **`%V>%`** : Use `View()` on the output
+-   **`%L>%`** : Log the relevant call and execution time to the console
+-   **`%P>%`** : Use `print()` on the output
+-   **`%summary>%`** : Print the `summary()` off the output
+-   **`%glimpse>%`** : Use `tibble::glimpse()` on the output
+-   **`%skim>%`** : Use `skimr::skim()` on the output
+-   **`%ae>%`** : Use `all.equal` on the input and output
+-   **`%compare>%`** : Use `arsenal::compare()` and open the report of the differences in the default browser window
+-   **`%gg>%`** : Apply the `rhs` to the data of a `gg` object and return the modified `gg` object
+-   **`%nowarn>%`** : Silence warnings
+-   **`%nomsg>%`** : Silence messages
+-   **`%strict>%`** : Fail on warning
+-   **`%try>%`** : Try, and in case of failure prints error and returns input
+-   **`%quietly>%`** : Use `purrr::quietly()` to capture outputs of all kind and print them
 
 Let's showcase a few of them.
 
-Silence a warning:
+debug the chain:
 
 ``` r
--1  %nowarn>% sqrt
-#> [1] NaN
+iris %>% head(2) %D>% `[`(4:5)
+```
+
+view steps of chain in the viewer:
+
+``` r
+iris %V>% head(2) %V>% `[`(4:5)
 ```
 
 Log steps in the console:
@@ -65,7 +73,7 @@ iris %L>% {Sys.sleep(1);head(.,2)} %L>% {Sys.sleep(2);.[4:5]}
 #> 2         0.2  setosa
 ```
 
-Use print, summary or glimpse on output:
+Use `print`, `summary` or `glimpse` on output:
 
 ``` r
 iris %P>% head(2) %P>% `[`(4:5)
@@ -128,16 +136,96 @@ iris %glimpse>% head(2) %glimpse>% `[`(4:5)
 #> 2         0.2  setosa
 ```
 
-view steps of chain in the viewer:
+Use `all.equal` on input and output, note that the method for tibbles gives a different output.
 
 ``` r
-iris %V>% head(2) %V>% `[`(4:5)
+iris %>% head(2) %ae>% 
+  transform(Species = as.character(Species), cst = 42)
+#> transform(., Species = as.character(Species), cst = 42)
+#> [1] "Length mismatch: comparison on first 5 components"
+#> [2] "Component \"Species\": 'current' is not a factor"
+#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species cst
+#> 1          5.1         3.5          1.4         0.2  setosa  42
+#> 2          4.9         3.0          1.4         0.2  setosa  42
+
+iris %>% tibble::as_tibble() %>% head(2) %ae>% 
+  transform(Species = as.character(Species), cst = 42)
+#> transform(., Species = as.character(Species), cst = 42)
+#> [1] "Attributes: < Component \"class\": 1 string mismatch >"
+#> [2] "Length mismatch: comparison on first 5 components"     
+#> [3] "Component \"Species\": 'current' is not a factor"
+#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species cst
+#> 1          5.1         3.5          1.4         0.2  setosa  42
+#> 2          4.9         3.0          1.4         0.2  setosa  42
 ```
 
-debug the chain:
+Use `arsenal::compare` on input and output, and opens a markdown report written into a temp file.
 
 ``` r
-iris %>% head(2) %D>% `[`(4:5)
+iris %>% head(2) %compare>% 
+  transform(Species = as.character(Species), cst = 42)
+```
+
+Use *tidyverse* syntax to mofidy a *gg* object's underlying data:
+
+``` r
+library(ggplot2,quietly = TRUE, warn.conflicts = FALSE)
+ggplot(iris, aes(Species, Sepal.Width, fill=Species)) +
+  geom_col() %gg>% dplyr::group_by(Species) %gg>% dplyr::summarize_at("Sepal.Width", mean) +
+  ggtitle("Using dplyr verbs")
+```
+
+![](man/figures/unnamed-chunk-9-1.png)
+
+Silence a warning or a message:
+
+``` r
+-1  %>% sqrt
+#> Warning in sqrt(.): production de NaN
+#> [1] NaN
+-1  %nowarn>% sqrt
+#> [1] NaN
+iris[50:51,3:5] %>% dplyr::left_join(iris[50:51,c(1:2,5)])
+#> Joining, by = "Species"
+#>   Petal.Length Petal.Width    Species Sepal.Length Sepal.Width
+#> 1          1.4         0.2     setosa            5         3.3
+#> 2          4.7         1.4 versicolor            7         3.2
+iris[50:51,3:5] %nomsg>% dplyr::left_join(iris[50:51,c(1:2,5)])
+#>   Petal.Length Petal.Width    Species Sepal.Length Sepal.Width
+#> 1          1.4         0.2     setosa            5         3.3
+#> 2          4.7         1.4 versicolor            7         3.2
+```
+
+Strictly fail on a warning
+
+``` r
+try(-1  %strict>% sqrt())
+```
+
+Try, and in case of failure prints error and returns input
+
+``` r
+"a"  %try>% log()
+#> [1] "a"
+```
+
+Use `quietly` to capture outputs of all kind and print them.
+
+``` r
+iris[50:51,3:5] %quietly>% 
+  dplyr::left_join(iris[50:51,c(1:2,5)]) %quietly>%
+  dplyr::mutate(Petal.Length = - Petal.Length, Petal.Length = sqrt(Petal.Length))
+#> dplyr::left_join(., iris[50:51, c(1:2, 5)]) 
+#> $messages
+#> [1] "Joining, by = \"Species\"\n"
+#> 
+#> 
+#> dplyr::mutate(., Petal.Length = -Petal.Length, Petal.Length = sqrt(Petal.Length)) 
+#> $warnings
+#> [1] "production de NaN"
+#>   Petal.Length Petal.Width    Species Sepal.Length Sepal.Width
+#> 1          NaN         0.2     setosa            5         3.3
+#> 2          NaN         1.4 versicolor            7         3.2
 ```
 
 `new_pipe`
@@ -147,7 +235,7 @@ It's easier to understand how to build a new `pipe` by looking at examples.
 
 ``` r
  `%T>%`
-#> Pipe operator
+#> Special pipe operator
 #> wrap:
 #> {
 #>     local(BODY)
@@ -181,11 +269,11 @@ Take a look at the other functions to understand how to make your own :
 
 ``` r
 `%nowarn>%`
-#> Pipe operator
+#> Special pipe operator
 #> wrap:
 #> suppressWarnings(BODY)
 `%P>%`
-#> Pipe operator
+#> Special pipe operator
 #> wrap:
 #> {
 #>     message(deparse(quote(BODY)))
@@ -194,7 +282,7 @@ Take a look at the other functions to understand how to make your own :
 #>     .
 #> }
 `%summary>%`
-#> Pipe operator
+#> Special pipe operator
 #> wrap:
 #> {
 #>     message(deparse(quote(BODY)))
@@ -204,7 +292,7 @@ Take a look at the other functions to understand how to make your own :
 #>     .
 #> }
 `%strict>%`
-#> Pipe operator
+#> Special pipe operator
 #> wrap:
 #> {
 #>     current_warn <- options()$warn
