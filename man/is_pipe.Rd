@@ -2,7 +2,7 @@
 % Please edit documentation in R/new_pipe.R
 \name{is_pipe}
 \alias{is_pipe}
-\title{Check whether a symbol is a valid magrittr pipe.}
+\title{Check whether a symbol is a valid pipe.}
 \usage{
 is_pipe(pipe)
 }
@@ -10,8 +10,8 @@ is_pipe(pipe)
 \item{pipe}{A quoted symbol}
 }
 \value{
-logical - TRUE if a valid magrittr pipe, FALSE otherwise.
+logical - TRUE if a valid pipe, FALSE otherwise.
 }
 \description{
-Check whether a symbol is a valid magrittr pipe.
+Check whether a symbol is a valid pipe.
 }

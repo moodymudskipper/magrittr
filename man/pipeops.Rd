@@ -20,7 +20,7 @@
 \alias{\%ae>\%}
 \alias{\%compare>\%}
 \alias{\%quietly>\%}
-\alias{\%auto_browse>\%}
+\alias{\%gg>\%}
 \title{Pipe operators to enhance magrittr}
 \usage{
 lhs \%>\% rhs
@@ -59,7 +59,7 @@ lhs \%compare>\% rhs
 
 lhs \%quietly>\% rhs
 
-lhs \%auto_browse>\% rhs
+lhs \%gg>\% rhs
 }
 \arguments{
 \item{lhs}{A value or the magrittr placeholder.}
@@ -69,8 +69,7 @@ lhs \%auto_browse>\% rhs
 \description{
 These operators include  magrittr's standard pipe operators \code{\%>\%},
 \code{\%T>\%}, \code{\%$\%} and \code{\%<>\%} and additional ones which
-provide side effects but mostly return the same output as \code{\%>\%}
-(with the exception of \code{\%strict>\%} and \code{\%try>\%}).
+provide side effects but mostly return the same output as \code{\%>\%}.
 }
 \details{
 In \emph{magrittr} pipe operators are all the same functions, and are recognized
@@ -84,7 +83,7 @@ They also have their own printing method.
 \item{\%T>\%}{Pipe a value forward into a function- or call expression and
 return the original value instead of the result (see
 \code{\link[magrittr]{tee}})}
-\item{\%$>\%}{Expose the names in \code{lhs} to the \code{rhs} expression. This is
+\item{\%$\%}{Expose the names in \code{lhs} to the \code{rhs} expression. This is
 useful when functions do not have a built-in data argument (see
 \code{\link[magrittr]{exposition}})}
 \item{\%<>\%}{Pipe an object forward into a function or call expression and update the
@@ -96,9 +95,14 @@ useful when functions do not have a built-in data argument (see
 \item{\%summary>\%}{Print the \code{summary()} off the output}
 \item{\%glimpse>\%}{Use \code{tibble::glimpse} on the output}
 \item{\%skim>\%}{Use \code{skimr::skim} on the output}
+\item{\%ae>\%}{Use \code{all.equal} on the input and output}
+\item{\%compare>\%}{Use \code{arsenal::compare} and open the report of the
+differences in the default browser window}
+\item{\%gg>\%}{Apply the \code{rhs} to the data of a \code{gg} object and return the modified \code{gg} object}
 \item{\%nowarn>\%}{Silence warnings}
 \item{\%nomsg>\%}{Silence messages}
 \item{\%strict>\%}{Fail on warning}
+\item{\%quietly>\%}{ Use \code{purrr::quietly} to capture outputs of all kind and print them}
 \item{\%try>\%}{Try, and in case of failure prints error and returns input}
 }
 }

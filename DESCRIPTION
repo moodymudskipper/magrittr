@@ -13,6 +13,7 @@ License: MIT + file LICENSE
 BugReports: https://github.com/moodymudskipper/pipes/issues
 Suggests: knitr,
     rmarkdown,
+    dplyr,
     purrr,
     rlang,
     arsenal,

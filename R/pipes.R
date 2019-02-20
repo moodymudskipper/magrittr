@@ -2,8 +2,7 @@
 #'
 #' These operators include  magrittr's standard pipe operators `%>%`,
 #' `%T>%`, `%$%` and `%<>%` and additional ones which 
-#' provide side effects but mostly return the same output as `%>%`
-#' (with the exception of `%strict>%` and `%try>%`). 
+#' provide side effects but mostly return the same output as `%>%`. 
 #' 
 #' In *magrittr* pipe operators are all the same functions, and are recognized
 #' in the code by their names, in *mmpipe* they inherit from the class `pipe` 
@@ -16,7 +15,7 @@
 #'   \item{\%T>\%}{Pipe a value forward into a function- or call expression and
 #'     return the original value instead of the result (see 
 #'     \code{\link[magrittr]{tee}})}
-#'   \item{\%$>\%}{Expose the names in `lhs` to the `rhs` expression. This is 
+#'   \item{\%$\%}{Expose the names in `lhs` to the `rhs` expression. This is 
 #'     useful when functions do not have a built-in data argument (see
 #'     \code{\link[magrittr]{exposition}})}
 #'   \item{\%<>\%}{Pipe an object forward into a function or call expression and update the 
@@ -28,9 +27,14 @@
 #'   \item{\%summary>\%}{Print the \code{summary()} off the output}
 #'   \item{\%glimpse>\%}{Use \code{tibble::glimpse} on the output}
 #'   \item{\%skim>\%}{Use \code{skimr::skim} on the output}
+#'   \item{\%ae>\%}{Use \code{all.equal} on the input and output}
+#'   \item{\%compare>\%}{Use \code{arsenal::compare} and open the report of the
+#'     differences in the default browser window}
+#'   \item{\%gg>\%}{Apply the `rhs` to the data of a `gg` object and return the modified `gg` object}
 #'   \item{\%nowarn>\%}{Silence warnings}
 #'   \item{\%nomsg>\%}{Silence messages}
 #'   \item{\%strict>\%}{Fail on warning}
+#'   \item{\%quietly>\%}{ Use `purrr::quietly` to capture outputs of all kind and print them}
 #'   \item{\%try>\%}{Try, and in case of failure prints error and returns input}
 #' }
 #'
@@ -191,14 +195,17 @@ NULL
 #' @export
 `%compare>%` <- new_pipe({
   if (!requireNamespace("arsenal"))
-    stop("The package `arsenal` must be installed to use `%quietly>%`")
+    stop("The package `arsenal` must be installed to use `%compare>%`")
   message(deparse(quote(BODY)))
   output <- BODY
-  print(summary(arsenal::compare(., output)))
+  txt <- paste(collapse = "\n",capture.output(summary(arsenal::compare(., output))))
+  f <- tempfile(fileext = ".html")
+  cat(txt,file = f)
+  rmarkdown::render(f)
+  shell(f)             
   cat("\n")
   output
 })
-
 
 #' @rdname pipeops
 #' @export
@@ -207,23 +214,60 @@ NULL
     stop("The package `purrr` must be installed to use `%quietly>%`")
   if (!requireNamespace("rlang"))
     stop("The package `rlang` must be installed to use `%quietly>%`")
-  message(deparse(quote(BODY)))
-  fml <- bquote(~.(quote(BODY)))
+  cat(deparse(quote(BODY)),"\n")
+  fml <- eval(bquote(~.(quote(BODY))))
   fun <- rlang::as_function(fml)
   output <- purrr::quietly(fun)(.)
-  print(output[-1])
+  msg <- purrr::compact(output[-1])
+  msg <- msg[msg!=""]
+  if(length(msg)) print (msg)
   cat("\n")
   output[[1]]
 })
 
+
 #' @rdname pipeops
 #' @export
-`%auto_browse>%` <- new_pipe({
-  if (!requireNamespace("skimr"))
-    stop("The package `skimr` must be installed to use `%skim>%`")
-  message(deparse(quote(BODY)))
-  fml <- bquote(~.(quote(BODY)))
-  fun <- rlang::as_function(fml)
-  output <- purrr::auto_browse(fun)(.)
-  output
+`%gg>%` <- new_pipe({
+  rhs <- quote(BODY)
+  ggm <- eval(substitute(ggmethod(FUN), list(FUN = rhs[[1]])))
+  rhs[[1]] <- quote(ggm)
+  eval(rhs)
 })
+
+
+# copied from gg fun but not exported here
+# from a function that modifies a data.frame, create a function than modifies
+# the data of a gg oject
+ggmethod <- function(f){
+  rlang::new_function(
+    # arguments of the new function are the same, except that 1st argument is gg
+    args = c(alist(gg = ),formals(f)[-1]),
+    
+    body = substitute({
+      # build the body of the fun pplied on `data`
+      # this fun's body will be a variation on the match.call() of current fun
+      mc <- match.call()
+      mc[[1]] <- quote(f)
+      pos_gg <- which(names(mc) == "gg")
+      fun_call <- as.call(c(mc[[1]],quote(x), as.list(mc[-c(1,pos_gg)])))
+      data <- gg$data
+      fun <- rlang::new_function(
+        # the fun applied on data should have only one arg
+        alist(x = ),
+        fun_call)
+      if (is.function(data)) {
+        # if data is function, compose with our function
+        gg$data <- purrr::compose(fun, data)
+      } else if (inherits(data,"waiver")) {
+        # if data is a waiver, replace it by our function
+        gg$data <- fun
+      } else if (is.data.frame(data)) {
+        # if data is a data frame, apply function on it
+        gg$data <- fun(data)
+      } else {
+        stop("unexpected class")
+      }
+      gg
+    }))
+}

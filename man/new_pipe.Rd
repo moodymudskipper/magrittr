@@ -4,7 +4,7 @@
 \alias{new_pipe}
 \title{Create a new pipe operator.}
 \usage{
-new_pipe(wrap = {     BODY })
+new_pipe(wrap)
 }
 \arguments{
 \item{wrap}{an expression that will be executed after \code{BODY} is replaced by
