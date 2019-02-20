@@ -226,16 +226,6 @@ NULL
 })
 
 
-#' @rdname pipeops
-#' @export
-`%gg>%` <- new_pipe({
-  rhs <- quote(BODY)
-  ggm <- eval(substitute(ggmethod(FUN), list(FUN = rhs[[1]])))
-  rhs[[1]] <- quote(ggm)
-  eval(rhs)
-})
-
-
 # copied from gg fun but not exported here
 # from a function that modifies a data.frame, create a function than modifies
 # the data of a gg oject
@@ -271,3 +261,12 @@ ggmethod <- function(f){
       gg
     }))
 }
+
+#' @rdname pipeops
+#' @export
+`%gg>%` <- new_pipe({
+  rhs <- quote(BODY)
+  ggm <- eval(substitute(pipes:::ggmethod(FUN), list(FUN = rhs[[1]])))
+  rhs[[1]] <- quote(ggm)
+  eval(rhs)
+})

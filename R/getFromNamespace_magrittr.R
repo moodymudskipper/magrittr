@@ -66,17 +66,17 @@ functions <- magrittr::functions
 
 #' `[.fseq`
 #' 
-#' Reexported from \code{\link[magrittr]{[.fseq}}
-#' @inheritParams magrittr::`[.fseq`
+#' Reexported from \code{\link[magrittr]{[[.fseq}}
+#' @inheritParams magrittr::`[[.fseq`
 #' @export
 `[.fseq` <- getFromNamespace("[.fseq","magrittr")
 
 #' `[[.fseq`
 #' 
-#' Reexported from \code{\link[magrittr]{[.fseq}}
-#' @inheritParams magrittr::`[.fseq`
+#' Reexported from \code{\link[magrittr]{[[.fseq}}
+#' @inheritParams magrittr::`[[.fseq`
 #' @export
-`[[.fseq` <- getFromNamespace("[.fseq","magrittr")
+`[[.fseq` <- getFromNamespace("[[.fseq","magrittr")
 
 #' print.fseq
 #' 

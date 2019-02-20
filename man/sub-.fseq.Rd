@@ -12,5 +12,5 @@
 \item{...}{index/indices. For double brackets, the index must be of length 1.}
 }
 \description{
-Reexported from \code{\link[magrittr]{[.fseq}}
+Reexported from \code{\link[magrittr]{[[.fseq}}
 }
