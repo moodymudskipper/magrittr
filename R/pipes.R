@@ -198,7 +198,7 @@ NULL
     stop("The package `arsenal` must be installed to use `%compare>%`")
   message(deparse(quote(BODY)))
   output <- BODY
-  txt <- paste(collapse = "\n",capture.output(summary(arsenal::compare(., output))))
+  txt <- paste(collapse = "\n",capture.output(summary(arsenal::comparedf(., output))))
   f <- tempfile(fileext = ".html")
   cat(txt,file = f)
   rmarkdown::render(f)
